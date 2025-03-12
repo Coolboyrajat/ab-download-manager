@@ -137,6 +137,8 @@ kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 compose = { id = "org.jetbrains.compose", version.ref = "compose" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+android-application = { id = "com.android.application", version = "8.1.0" }
+android-library = { id = "com.android.library", version = "8.1.0" }
 
 buildConfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildConfig" }
 changeLog = { id = "org.jetbrains.changelog", version.ref = "changelog" }
