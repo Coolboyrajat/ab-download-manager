@@ -38,6 +38,7 @@ include("shared:updater")
 include("shared:auto-start")
 include("shared:nanohttp4k")
 include("android:app")
+include(":ios")
 includeBuild("./compositeBuilds/shared"){
     name="build-shared"
 }
