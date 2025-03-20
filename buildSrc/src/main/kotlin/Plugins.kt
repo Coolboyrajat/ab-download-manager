@@ -10,6 +10,7 @@ object MyPlugins {
 }
 object MyPlatform{
     fun getPlatform() = Platform
+    val isIOS get() = Platform == Platform.IOS
 }
 object Plugins {
     object Kotlin {
