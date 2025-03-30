@@ -11,117 +11,122 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import com.abdownloadmanager.android.ui.DownloadList
+import com.abdownloadmanager.android.settings.UserInterfaceSettings
 import com.abdownloadmanager.shared.domain.DownloadSystem
 import com.abdownloadmanager.shared.domain.IDownloadMonitor
+import com.abdownloadmanager.shared.ui.components.TopBarAction
 import com.abdownloadmanager.shared.ui.theme.MyApplicationTheme
-import ir.amirab.downloader.downloaditem.DownloadStatus
 import ir.amirab.downloader.monitor.*
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.androidx.compose.koinViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.io.File
 
-
 class MainActivity : ComponentActivity(), KoinComponent {
-
-    private lateinit var downloadSystem: DownloadSystem
+    private val downloadSystem: DownloadSystem by inject()
+    private val downloadMonitor: IDownloadMonitor by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Initialize download system -  This section needs significant expansion for production-ready code.  Error handling and resource management are minimal here.
-        val appContext = applicationContext
-        val downloadsDir = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
-            ?: File(appContext.filesDir, "downloads").apply { mkdirs() }
-
-        val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
-        val downloadListDB = DownloadListDb(scope) // Requires implementation
-        val foldersRegistry = DownloadFoldersRegistry(
-            scope = scope,
-            db = downloadListDB,
-            defaultDownloadFolder = downloadsDir
-        )
-        val downloadManager = DownloadManager(scope) // Requires implementation, likely using a system download manager
-        val queueManager = QueueManager(downloadManager, scope) // Requires implementation
-        val categoryManager = CategoryManager(scope) // Requires implementation
-        val downloadMonitor = DownloadMonitor(downloadManager) // Requires implementation
-
-        downloadSystem = DownloadSystem(
-            downloadManager = downloadManager,
-            queueManager = queueManager,
-            categoryManager = categoryManager,
-            downloadMonitor = downloadMonitor,
-            scope = scope,
-            downloadListDB = downloadListDB,
-            foldersRegistry = foldersRegistry
-        )
-
-        scope.launch {
-            downloadSystem.boot() // Requires implementation in DownloadSystem
-        }
-
         setContent {
-            val scope = rememberCoroutineScope()
-            var showAddDownloadDialog by remember { mutableStateOf(false) }
+            val uiSettings = koinViewModel<UserInterfaceSettings>()
+            val isDarkTheme by uiSettings.isDarkTheme.collectAsState()
 
-            MyApplicationTheme {
-                Scaffold(
-                    topBar = {
-                        TopAppBar(
-                            title = { Text("AB DM") },
-                            actions = {
-                                IconButton(onClick = { /* Search action */ }) {
-                                    Icon(Icons.Default.Search, contentDescription = "Search")
-                                }
-                                IconButton(onClick = { /* Browser action - Placeholder */ }) {
-                                    Icon(Icons.Default.Public, contentDescription = "Browser")
-                                }
-                                IconButton(onClick = { /* More action - Placeholder */ }) {
-                                    Icon(Icons.Default.MoreVert, contentDescription = "More")
-                                }
-                            },
-                            navigationIcon = {
-                                IconButton(onClick = { /* Menu action - Placeholder */ }) {
-                                    Icon(Icons.Default.Menu, contentDescription = "Menu")
-                                }
-                            }
-                        )
-                    },
-                    floatingActionButton = {
-                        FloatingActionButton(
-                            onClick = { showAddDownloadDialog = true },
-                            containerColor = MaterialTheme.colorScheme.primary
-                        ) {
-                            Icon(Icons.Default.CloudDownload, contentDescription = "Add Download")
-                        }
-                    }
-                ) { padding ->
-                    Surface(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(padding),
-                        color = Color(0xFF121212)
-                    ) {
-                        DownloadList(downloadSystem.downloadMonitor) // Pass the download monitor
-                    }
-                }
-
-                if (showAddDownloadDialog) {
-                    AddDownloadDialog(downloadSystem, scope, showAddDownloadDialog)
+            MyApplicationTheme(darkTheme = isDarkTheme) {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    MainScreen(
+                        downloadSystem = downloadSystem,
+                        downloadMonitor = downloadMonitor,
+                        uiSettings = uiSettings
+                    )
                 }
             }
         }
     }
 }
 
+
 @Composable
-fun AddDownloadDialog(downloadSystem: DownloadSystem, scope:CoroutineScope, showDialog: MutableState<Boolean>){
+fun MainScreen(downloadSystem: DownloadSystem, downloadMonitor: IDownloadMonitor, uiSettings: UserInterfaceSettings) {
+    var showAddDownloadDialog by remember { mutableStateOf(false) }
+    var showSettingsScreen by remember { mutableStateOf(false) }
+    var showMenu by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+
+    Scaffold(
+        topBar = {
+            CustomTopAppBar(
+                title = "AB DM",
+                actions = uiSettings.getConfiguredTopBarActions(
+                    onExitClick = { /* finishAffinity()  -  Needs to be handled appropriately within the context of MainScreen*/ },
+                    onSortClick = { /* Implement sort */ },
+                    onQrClick = { /* Implement QR code functionality */ },
+                    onSearchClick = { /* Implement search */ },
+                    onBrowserClick = { /* Implement browser */ }
+                ),
+                onNavigationClick = { /* Implement drawer open */ },
+                onMoreClick = { showMenu = true }
+            )
+
+            // Dropdown menu for more options
+            if (showMenu) {
+                DropdownMenu(
+                    expanded = showMenu,
+                    onDismissRequest = { showMenu = false },
+                    modifier = Modifier.background(MaterialTheme.colorScheme.surface) //Using MaterialTheme for consistent color
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("Settings") },
+                        onClick = {
+                            showSettingsScreen = true
+                            showMenu = false
+                        },
+                        leadingIcon = {
+                            Icon(Icons.Default.Settings, "Settings")
+                        }
+                    )
+                    // Add more menu items as needed
+                }
+            }
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { showAddDownloadDialog = true },
+                containerColor = MaterialTheme.colorScheme.primary
+            ) {
+                Icon(Icons.Default.CloudDownload, contentDescription = "Add Download")
+            }
+        }
+    ) { padding ->
+        Surface(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
+            color = MaterialTheme.colorScheme.background //Using MaterialTheme for consistent color
+        ) {
+            DownloadList(downloadMonitor, uiSettings)
+        }
+
+        if (showAddDownloadDialog) {
+            AddDownloadDialog(downloadSystem = downloadSystem, scope = scope, showDialog = remember { mutableStateOf(showAddDownloadDialog) })
+        }
+        if (showSettingsScreen) {
+            SettingsScreen(
+                settings = uiSettings,
+                onBackClick = { showSettingsScreen = false }
+            )
+        }
+    }
+}
+
+@Composable
+fun AddDownloadDialog(downloadSystem: DownloadSystem, scope: CoroutineScope, showDialog: MutableState<Boolean>) {
     var url by remember { mutableStateOf("") }
     AlertDialog(
         onDismissRequest = { showDialog.value = false },
@@ -159,26 +164,4 @@ fun AddDownloadDialog(downloadSystem: DownloadSystem, scope:CoroutineScope, show
             }
         }
     )
-}
-
-
-class MainViewModel : androidx.lifecycle.ViewModel(), KoinComponent {
-    private val downloadMonitor: IDownloadMonitor by inject()
-
-    val activeDownloadCount = downloadMonitor.activeDownloadCount
-
-    val allDownloadsFlow = downloadMonitor.getAllDownloadsFlow()
-}
-
-// Placeholder for DownloadItem and DownloadList composables.  These need to be adapted to use the data structures from ir.amirab.downloader
-@Composable
-fun DownloadList(downloadMonitor: DownloadMonitor){
-    //Implement DownloadList using downloadMonitor
-    Text("Download List Placeholder")
-}
-
-@Composable
-fun DownloadItem(downloadItem: DownloadItem){
-    // Implement DownloadItem using downloadItem
-    Text("Download Item Placeholder")
 }
