@@ -3,12 +3,9 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.get
-import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 /**
@@ -56,38 +53,36 @@ fun Project.configureKmp(
             }
         }
         
-        sourceSets {
-            val commonMain by getting {
-                dependencies {
-                    implementation(project.dependencies.platform("org.jetbrains.kotlin:kotlin-bom:${rootProject.extra["kotlin.version"]}"))
-                    implementation("org.jetbrains.kotlin:kotlin-stdlib")
-                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${rootProject.extra["coroutines.version"]}")
-                }
-            }
-            
-            val commonTest by getting {
-                dependencies {
-                    implementation(kotlin("test"))
-                }
-            }
-            
-            if (enableAndroid) {
-                val androidMain by getting {
-                    dependencies {
-                        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:${rootProject.extra["coroutines.version"]}")
-                    }
-                }
-            }
-            
-            if (enableDesktop) {
-                val desktopMain by getting {
-                    dependencies {
-                        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:${rootProject.extra["coroutines.version"]}")
-                    }
-                }
+        // Configure source sets using type-safe source set configuration
+        val kotlinVersion = project.rootProject.property("kotlin.version").toString()
+        val coroutinesVersion = project.rootProject.property("coroutines.version").toString()
+        
+        // Configure common main source set
+        sourceSets.maybeCreate("commonMain").dependencies {
+            implementation(project.dependencies.platform("org.jetbrains.kotlin:kotlin-bom:$kotlinVersion"))
+            implementation("org.jetbrains.kotlin:kotlin-stdlib")
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
+        }
+        
+        // Configure common test source set
+        sourceSets.maybeCreate("commonTest").dependencies {
+            implementation(kotlin("test"))
+        }
+        
+        // Configure platform-specific source sets if enabled
+        if (enableAndroid) {
+            sourceSets.maybeCreate("androidMain").dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion")
             }
         }
         
+        if (enableDesktop) {
+            sourceSets.maybeCreate("desktopMain").dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:$coroutinesVersion")
+            }
+        }
+        
+        // Apply additional configuration if provided
         additionalConfig?.invoke(this)
     }
     

@@ -13,18 +13,7 @@ pluginManagement {
         name = "shared-composite"
     }
     
-    // Set resolutionStrategy for plugins to avoid conflicts
-    resolutionStrategy {
-        eachPlugin {
-            // Use the correct implementation for Kotlin Multiplatform
-            if (requested.id.id.startsWith("org.jetbrains.kotlin")) {
-                useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${requested.version}")
-            }
-            if (requested.id.id == "org.jetbrains.compose") {
-                useModule("org.jetbrains.compose:compose-gradle-plugin:${requested.version}")
-            }
-        }
-    }
+    // Let Gradle resolve plugins naturally without custom resolution strategy
 }
 
 @Suppress("UnstableApiUsage")

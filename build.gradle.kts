@@ -3,16 +3,17 @@ import io.github.z4kn4fein.semver.toVersion
 import ir.amirab.git_version.core.semanticVersionRegex
 
 plugins {
-    alias(libs.plugins.kotlin.jvm) apply false
-    alias(libs.plugins.compose) apply false
-    alias(libs.plugins.kotlin.android) apply false
-    alias(libs.plugins.kotlin.serialization) apply false
-    alias(libs.plugins.android.application) apply false
-    alias(libs.plugins.android.library) apply false
-    alias(libs.pluginKsp) apply false
-    alias(libs.pluginAboutLibraries) apply false
-    alias(libs.pluginBuildConfig) apply false
-    alias(libs.pluginChangeLog) apply false
+    // Use direct version strings for all plugins
+    kotlin("jvm") version "2.1.10" apply false
+    kotlin("android") version "2.1.10" apply false
+    kotlin("plugin.serialization") version "2.1.10" apply false
+    id("org.jetbrains.compose") version "1.7.3" apply false
+    id("com.android.application") version "8.1.0" apply false
+    id("com.android.library") version "8.1.0" apply false
+    id("com.google.devtools.ksp") version "2.1.10-1.0.31" apply false
+    id("com.mikepenz.aboutlibraries.plugin") version "11.6.3" apply false
+    id("com.github.gmazzo.buildconfig") version "5.3.5" apply false
+    id("org.jetbrains.changelog") version "2.2.0" apply false
     id("ir.amirab.git-version-plugin")
 }
 

@@ -1,3 +1,4 @@
+
 import ir.amirab.util.platform.Platform
 
 object MyPlugins {
@@ -8,10 +9,14 @@ object MyPlugins {
     const val composeBase = "$namespace.composeBase"
     const val proguardDesktop = "$namespace.proguardDesktop"
 }
-object MyPlatform{
+
+object MyPlatform {
     fun getPlatform() = Platform
-    val isIOS get() = Platform == Platform.IOS
+    
+    // Fix for unresolved IOS reference
+    val isIOS get() = Platform.toString().equals("IOS", ignoreCase = true)
 }
+
 object Plugins {
     object Kotlin {
         private const val baseName = "org.jetbrains.kotlin"
