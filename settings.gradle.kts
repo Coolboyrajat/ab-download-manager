@@ -1,19 +1,23 @@
-
 pluginManagement {
     repositories {
         gradlePluginPortal()
+        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
         google()
         mavenCentral()
-        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     }
-    
-    // Include the plugins from the composite build
-    includeBuild("./compositeBuilds/plugins")
-    includeBuild("./compositeBuilds/shared") {
-        name = "shared-composite"
+
+    plugins {
+        // Use version from version catalog for Kotlin plugins
+        val kotlinVersion = extra["kotlin.version"] as String
+        // Get the compose version from the version catalog or use a default
+        val composeVersion = "1.7.3" // Use the version from libs.versions.toml
+
+        kotlin("jvm").version(kotlinVersion)
+        kotlin("multiplatform").version(kotlinVersion)
+        kotlin("android").version(kotlinVersion)
+        kotlin("plugin.serialization").version(kotlinVersion)
+        id("org.jetbrains.compose").version(composeVersion)
     }
-    
-    // Let Gradle resolve plugins naturally without custom resolution strategy
 }
 
 @Suppress("UnstableApiUsage")
@@ -30,6 +34,12 @@ dependencyResolutionManagement {
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 rootProject.name = "ABDownloadManager"
+
+// Include composite builds
+includeBuild("compositeBuilds/plugins")
+includeBuild("compositeBuilds/shared") {
+    name = "shared-composite"
+}
 
 // Desktop modules
 include(":desktop:app")
@@ -68,7 +78,6 @@ include(":android:app")
 include(":ios:app")
 include(":ios:shared")
 
-// Include composite builds
-includeBuild("./compositeBuilds/shared") {
-    name = "shared-composite"
-}
+// Expose project properties
+val composeVersion: String by settings
+val kotlinVersion: String by settings

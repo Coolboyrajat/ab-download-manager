@@ -59,3 +59,22 @@ class InstallerPlugin : Plugin<Project> {
         }
     }
 }
+package ir.amirab.installer
+
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+
+class InstallerPlugin : Plugin<Project> {
+    override fun apply(target: Project) {
+        // Basic implementation for the installer plugin
+        target.extensions.create("installer", InstallerExtension::class.java)
+    }
+}
+
+open class InstallerExtension {
+    var installationPath: String = ""
+    
+    fun setup() {
+        // Installer setup logic would go here
+    }
+}
