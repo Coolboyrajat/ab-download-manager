@@ -7,8 +7,24 @@ pluginManagement {
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     }
     
-    // Include the git-version-plugin from the composite build
+    // Include the plugins from the composite build
     includeBuild("./compositeBuilds/plugins")
+    includeBuild("./compositeBuilds/shared") {
+        name = "shared-composite"
+    }
+    
+    // Set resolutionStrategy for plugins to avoid conflicts
+    resolutionStrategy {
+        eachPlugin {
+            // Use the correct implementation for Kotlin Multiplatform
+            if (requested.id.id.startsWith("org.jetbrains.kotlin")) {
+                useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${requested.version}")
+            }
+            if (requested.id.id == "org.jetbrains.compose") {
+                useModule("org.jetbrains.compose:compose-gradle-plugin:${requested.version}")
+            }
+        }
+    }
 }
 
 @Suppress("UnstableApiUsage")
@@ -65,5 +81,5 @@ include(":ios:shared")
 
 // Include composite builds
 includeBuild("./compositeBuilds/shared") {
-    name = "build-shared"
+    name = "shared-composite"
 }

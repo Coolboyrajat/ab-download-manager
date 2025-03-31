@@ -2,11 +2,13 @@
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.kotlin
+import org.gradle.kotlin.dsl.get
+import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 /**
@@ -20,7 +22,7 @@ fun Project.configureKmp(
 ) {
     plugins.apply("org.jetbrains.kotlin.multiplatform")
     
-    kotlin {
+    extensions.configure<KotlinMultiplatformExtension> {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         applyDefaultHierarchyTemplate()
         
@@ -47,8 +49,8 @@ fun Project.configureKmp(
                 iosX64(),
                 iosArm64(),
                 iosSimulatorArm64()
-            ).forEach {
-                it.binaries.framework {
+            ).forEach { target ->
+                target.binaries.framework {
                     baseName = project.name
                 }
             }
@@ -57,8 +59,9 @@ fun Project.configureKmp(
         sourceSets {
             val commonMain by getting {
                 dependencies {
-                    implementation(libs.kotlin.stdlib)
-                    implementation(libs.kotlin.coroutines.core)
+                    implementation(project.dependencies.platform("org.jetbrains.kotlin:kotlin-bom:${rootProject.extra["kotlin.version"]}"))
+                    implementation("org.jetbrains.kotlin:kotlin-stdlib")
+                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${rootProject.extra["coroutines.version"]}")
                 }
             }
             
@@ -71,7 +74,7 @@ fun Project.configureKmp(
             if (enableAndroid) {
                 val androidMain by getting {
                     dependencies {
-                        implementation(libs.kotlin.coroutines.android)
+                        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:${rootProject.extra["coroutines.version"]}")
                     }
                 }
             }
@@ -79,7 +82,7 @@ fun Project.configureKmp(
             if (enableDesktop) {
                 val desktopMain by getting {
                     dependencies {
-                        implementation(libs.kotlin.coroutines.swing)
+                        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:${rootProject.extra["coroutines.version"]}")
                     }
                 }
             }
@@ -99,5 +102,3 @@ fun Project.configureKmp(
         }
     }
 }
-
-val Project.libs get() = extensions.getByName("libs") as org.gradle.accessors.dm.LibrariesForLibs
