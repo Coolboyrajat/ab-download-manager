@@ -44,10 +44,11 @@ abstract class InstallerPluginExtension {
         project.tasks.named(Constants.CREATE_INSTALLER_TASK_NAME)
     }
 
-    fun isThisPlatformSupported() = when (Platform.getCurrentPlatform()) {
-        Platform.Desktop.Windows -> windowsConfig != null
-        else -> {
-            false
+    fun isThisPlatformSupported(): Boolean {
+        val currentPlatform = Platform.getCurrentPlatform()
+        return when {
+            currentPlatform == Platform.Desktop.Windows -> windowsConfig != null
+            else -> false
         }
     }
 

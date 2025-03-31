@@ -1,16 +1,19 @@
+
 pluginManagement {
     repositories {
         gradlePluginPortal()
         google()
         mavenCentral()
+        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     }
+    
+    // Include the git-version-plugin from the composite build
+    includeBuild("./compositeBuilds/plugins")
 }
 
-plugins{
-//    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
-}
-
+@Suppress("UnstableApiUsage")
 dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         mavenCentral()
         google()
@@ -18,34 +21,49 @@ dependencyResolutionManagement {
     }
 }
 
+// Enable type-safe project accessors
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 rootProject.name = "ABDownloadManager"
 
-include("desktop:app")
-include("desktop:app-utils")
-include("desktop:custom-window-frame")
-include("desktop:shared")
-include("desktop:tray:common")
-include("desktop:tray:windows")
-include("desktop:tray:linux")
-include("desktop:tray:mac")
-include("desktop:mac_utils")
-include("downloader:core")
-include("downloader:monitor")
-include("integration:server")
-include("shared:utils")
-include("shared:app")
-include("shared:app-utils")
-include("shared:compose-utils")
-include("shared:resources")
-include("shared:resources:contracts")
-include("shared:config")
-include("shared:updater")
-include("shared:auto-start")
-include("shared:nanohttp4k")
-include("android:app")
+// Desktop modules
+include(":desktop:app")
+include(":desktop:app-utils")
+include(":desktop:custom-window-frame")
+include(":desktop:shared")
+include(":desktop:tray:common")
+include(":desktop:tray:windows")
+include(":desktop:tray:linux")
+include(":desktop:tray:mac")
+include(":desktop:mac_utils")
+
+// Downloader modules
+include(":downloader:core")
+include(":downloader:monitor")
+
+// Integration module
+include(":integration:server")
+
+// Shared modules
+include(":shared:utils")
+include(":shared:app")
+include(":shared:app-utils")
+include(":shared:compose-utils")
+include(":shared:resources")
+include(":shared:resources:contracts")
+include(":shared:config")
+include(":shared:updater")
+include(":shared:auto-start")
+include(":shared:nanohttp4k")
+
+// Android module
+include(":android:app")
+
+// iOS modules
 include(":ios:app")
 include(":ios:shared")
-includeBuild("./compositeBuilds/shared"){
-    name="build-shared"
+
+// Include composite builds
+includeBuild("./compositeBuilds/shared") {
+    name = "build-shared"
 }
-includeBuild("./compositeBuilds/plugins")
