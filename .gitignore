@@ -5,3 +5,9 @@
 # Ignore Gradle build output directory
 build
 .idea
+
+# Ignore local properties file
+local.properties
+
+# Ignore VS Code settings
+.vscode/
