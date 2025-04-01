@@ -1,4 +1,11 @@
 
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
 plugins {
     // Use plugins with 'apply false' to avoid applying directly to this project
     alias(libs.plugins.android.application) apply false

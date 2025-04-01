@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.compose)
-    id("com.android.application")
+    alias(libs.plugins.android.application)
     id(Plugins.Kotlin.serialization)
     id(Plugins.ksp)
 }
