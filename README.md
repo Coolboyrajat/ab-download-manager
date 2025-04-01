@@ -7,3 +7,11 @@
     <img width="180" height="400" src="assets/screenshots/ui.png" alt="ui">
   </a>
 </div>
+
+
+```
+chmod +x setup-java.sh && ./setup-java.sh
+```
+```
+./gradlew :android:app:assembleDebug
+```

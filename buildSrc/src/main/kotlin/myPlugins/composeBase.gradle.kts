@@ -15,30 +15,14 @@ dependencies {
     // Use the compose BOM to manage compose dependencies
     val composeBomVersion = project.rootProject.properties["compose.version"]?.toString() ?: "1.5.0"
     // These functions need to be accessed through the configurations object
-    configurations.implementation.get().dependencies.add(
-        project.dependencies.platform("org.jetbrains.compose:compose-bom:$composeBomVersion")
-    )
-    configurations.implementation.get().dependencies.add(
-        project.dependencies.create("org.jetbrains.compose.runtime:runtime")
-    )
-    configurations.implementation.get().dependencies.add(
-        project.dependencies.create("org.jetbrains.compose.foundation:foundation")
-    )
-    configurations.implementation.get().dependencies.add(
-        project.dependencies.create("org.jetbrains.compose.material3:material3")
-    )
-    configurations.implementation.get().dependencies.add(
-        project.dependencies.create("org.jetbrains.compose.ui:ui")
-    )
-    configurations.implementation.get().dependencies.add(
-        project.dependencies.create("org.jetbrains.compose.components:components-resources")
-    )
-    
-    // Add preview support
-    configurations.implementation.get().dependencies.add(
-        project.dependencies.create("org.jetbrains.compose.ui:ui-tooling-preview")
-    )
-    configurations.debugImplementation.get().dependencies.add(
-        project.dependencies.create("org.jetbrains.compose.ui:ui-tooling")
-    )
+    "implementation"(platform("org.jetbrains.compose:compose-bom:$composeBomVersion"))
+        "implementation"("org.jetbrains.compose.runtime:runtime")
+        "implementation"("org.jetbrains.compose.foundation:foundation")
+        "implementation"("org.jetbrains.compose.material3:material3")
+        "implementation"("org.jetbrains.compose.ui:ui")
+        "implementation"("org.jetbrains.compose.components:components-resources")
+        
+        // Add preview support
+        "implementation"("org.jetbrains.compose.ui:ui-tooling-preview")
+        "debugImplementation"("org.jetbrains.compose.ui:ui-tooling")
 }

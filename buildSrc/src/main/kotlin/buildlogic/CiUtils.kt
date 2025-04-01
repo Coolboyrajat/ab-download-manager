@@ -23,22 +23,12 @@ enum class Platform {
             "apk" -> ANDROID
             else -> null
         }
+        val Windows = WINDOWS
+        val Linux = LINUX 
+        val MacOS = MACOS
     }
-    
-    object Desktop {
-        object Windows : Platform() {
-            override fun toString() = "WINDOWS"
-        }
-        object Linux : Platform() {
-            override fun toString() = "LINUX"
-        }
-        object MacOS : Platform() {
-            override fun toString() = "MACOS"
-        }
-    }
-    
-    val name: String
-        get() = toString()
+
+    override fun toString(): String = super.name
 }
 
 // Create temporary enum for Arch

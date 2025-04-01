@@ -3,14 +3,17 @@ plugins {
     `maven-publish`
 }
 
-group = "ir.amirab.plugin"
-version = "1"
+group = "ir.amirab"
+version = "1.0.0"
 
 repositories {
     mavenCentral()
+    gradlePluginPortal()
 }
 
 dependencies {
+    implementation("org.eclipse.jgit:org.eclipse.jgit:6.7.0.202309050840-r")
+    implementation("io.github.z4kn4fein:semver:1.4.2")
     implementation(gradleApi())
     implementation(kotlin("stdlib"))
 }

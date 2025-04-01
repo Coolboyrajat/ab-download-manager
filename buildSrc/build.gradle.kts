@@ -38,5 +38,5 @@ dependencies {
 
     // Add dependencies from shared composite module with correct group names
     implementation("ir.amirab.util:platform:1")
-    implementation("ir.amirab.installer:installer-plugin:1.0.0")
 }
+
