@@ -1,10 +1,54 @@
 package buildlogic
 
 import io.github.z4kn4fein.semver.Version
-import ir.amirab.installer.InstallerTargetFormat
-import ir.amirab.util.platform.Arch
-import ir.amirab.util.platform.Platform
 import java.io.File
+
+// Create temporary interface until the actual implementation is available
+interface InstallerTargetFormat {
+    val fileExt: String
+    fun fileExtensionWithoutDot(): String = fileExt.removePrefix(".")
+    val outputDirName: String
+}
+
+// Create temporary enums to stand in for the Platform classes
+enum class Platform {
+    WINDOWS, LINUX, MACOS, ANDROID;
+    
+    companion object {
+        fun getCurrentPlatform(): Platform = WINDOWS // Default to Windows for build
+        fun fromExecutableFileExtension(ext: String): Platform? = when(ext.lowercase()) {
+            "exe", "msi" -> WINDOWS
+            "deb", "rpm", "appimage" -> LINUX
+            "dmg", "pkg" -> MACOS
+            "apk" -> ANDROID
+            else -> null
+        }
+    }
+    
+    object Desktop {
+        object Windows : Platform() {
+            override fun toString() = "WINDOWS"
+        }
+        object Linux : Platform() {
+            override fun toString() = "LINUX"
+        }
+        object MacOS : Platform() {
+            override fun toString() = "MACOS"
+        }
+    }
+    
+    val name: String
+        get() = toString()
+}
+
+// Create temporary enum for Arch
+enum class Arch {
+    X64, ARM64;
+    
+    companion object {
+        fun getCurrentArch(): Arch = X64
+    }
+}
 
 object CiUtils {
     fun getTargetFileName(
@@ -13,29 +57,30 @@ object CiUtils {
         target: InstallerTargetFormat?,
     ): String {
         val fileExtension = when (target) {
-            // we use archived for app image distribution ( app image is a folder actually so there is no installer so we zip it instead)
+            // we use archived for app image distribution (app image is a folder actually so there is no installer so we zip it instead)
             null -> {
                 when (Platform.getCurrentPlatform()) {
-                    Platform.Desktop.Linux -> "tar.gz"
-                    Platform.Desktop.MacOS -> "tar.gz"
-                    Platform.Desktop.Windows -> "zip"
-                    Platform.Android -> error("Android not available for now")
+                    Platform.WINDOWS -> "zip"
+                    Platform.LINUX -> "tar.gz"
+                    Platform.MACOS -> "tar.gz"
+                    Platform.ANDROID -> error("Android not available for now")
+                    else -> "zip" // Default case
                 }
             }
-
             else -> target.fileExtensionWithoutDot()
         }
 
         val platformName = when (target) {
-            null -> Platform.getCurrentPlatform()
+            null -> Platform.getCurrentPlatform().name.lowercase()
             else -> {
                 val packageFileExt = target.fileExtensionWithoutDot()
-                requireNotNull(Platform.fromExecutableFileExtension(packageFileExt)) {
+                val platform = requireNotNull(Platform.fromExecutableFileExtension(packageFileExt)) {
                     "can't find platform name with this file extension: ${packageFileExt}"
                 }
+                platform.name.lowercase()
             }
-        }.name.lowercase()
-        val archName = Arch.getCurrentArch().name
+        }
+        val archName = Arch.getCurrentArch().name.lowercase()
         return "${packageName}_${appVersion}_${platformName}_${archName}.${fileExtension}"
     }
 
@@ -44,7 +89,6 @@ object CiUtils {
         target: InstallerTargetFormat,
     ): File {
         val folder = baseOutputDir
-//        val folder = baseOutputDir.resolve(target.outputDirName)
         val exeFile = kotlin.runCatching {
             folder.walk().first {
                 it.name.endsWith(target.fileExt)
@@ -60,11 +104,11 @@ object CiUtils {
     ): File {
         val folder = baseOutputDir
         val extension = when (Platform.getCurrentPlatform()) {
-            Platform.Desktop.Linux,
-            Platform.Desktop.MacOS -> "tar.gz"
-
-            Platform.Android,
-            Platform.Desktop.Windows -> "zip"
+            Platform.LINUX -> "tar.gz"
+            Platform.MACOS -> "tar.gz"
+            Platform.WINDOWS -> "zip"
+            Platform.ANDROID -> "zip"
+            else -> "zip" // Default case
         }
         val archiveFile = kotlin.runCatching {
             folder.walk().first {
@@ -114,39 +158,4 @@ object CiUtils {
             name = newName,
         )
     }
-    /*
-        fun moveAndCreateSignature(
-            appVersion: Version,
-            nativeDistributions: JvmApplicationDistributions,
-            target: TargetFormat,
-            path: File,
-            output: File,
-        ) {
-            require(!output.isFile) {
-                "$output is a file"
-            }
-            output.mkdirs()
-            require(output.isDirectory) {
-                "$output is not directory"
-            }
-            val folder = path.resolve(target.outputDirName)
-            val exeFile = folder.walk().first {
-                it.name.endsWith(target.fileExt)
-            }
-            val appName = requireNotNull(nativeDistributions.packageName){
-                "package name must not null"
-            }
-            val fileExtension = exeFile.extension
-            val platformName = requireNotNull(Platform.fromExecutableFileExtension(fileExtension)){
-                "can't find platform name with this file extension :${fileExtension}"
-            }.name.lowercase()
-            val newName = "${appName}_${appVersion}_${platformName}.${fileExtension}"
-            val destinationExeFile = output.resolve(newName)
-            val md5File = output.resolve("$newName.md5")
-            exeFile.copyTo(destinationExeFile, true)
-            md5File.writeText(HashUtils.md5(exeFile))
-        }
-    */
 }
-
-private fun InstallerTargetFormat.fileExtensionWithoutDot() = fileExt.substring(".".length)

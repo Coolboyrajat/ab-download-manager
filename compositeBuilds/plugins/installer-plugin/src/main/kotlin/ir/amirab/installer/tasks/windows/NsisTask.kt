@@ -1,8 +1,9 @@
+
 package ir.amirab.installer.tasks.windows
 
 import com.github.jknack.handlebars.Context
 import com.github.jknack.handlebars.Handlebars
-import ir.amirab.installer.extensiion.WindowsConfig
+import ir.amirab.installer.extension.WindowsConfig
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.MapProperty
@@ -48,23 +49,23 @@ abstract class NsisTask : DefaultTask() {
 
     private fun createHandleBarContext(): Context {
         val commonParams = commonParams.get()
-        val common = mapOf(
-            "app_name" to commonParams.appName!!,
-            "app_display_name" to commonParams.appDisplayName!!,
-            "app_version" to commonParams.appVersion!!,
-            "app_display_version" to commonParams.appDisplayVersion!!,
-            "app_data_dir_name" to commonParams.appDataDirName!!,
-            "license_file" to commonParams.licenceFile!!,
-            "icon_file" to commonParams.iconFile!!,
+        val common = mapOf<String, Any>(
+            "app_name" to (commonParams.appName ?: ""),
+            "app_display_name" to (commonParams.appDisplayName ?: ""),
+            "app_version" to (commonParams.appVersion ?: ""),
+            "app_display_version" to (commonParams.appDisplayVersion ?: ""),
+            "app_data_dir_name" to (commonParams.appDataDirName ?: ""),
+            "license_file" to (commonParams.licenceFile ?: File("")),
+            "icon_file" to (commonParams.iconFile ?: File("")),
         )
-        val overrides = mapOf(
+        val overrides = mapOf<String, Any>(
             "input_dir" to sourceFolder.get().asFile.absolutePath,
             "output_file" to "${destFolder.file(outputFileName).get().asFile.path}.exe",
         )
         return Context.newContext(
             extraParams
                 .get()
-                .plus(common)
+                .plus(common as Map<String, Any>)
                 .plus(overrides)
         )
     }

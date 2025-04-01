@@ -1,5 +1,5 @@
 
-import ir.amirab.util.platform.Platform
+import buildlogic.Platform
 
 object MyPlugins {
     private const val namespace = "myPlugins"
@@ -14,7 +14,7 @@ object MyPlatform {
     fun getPlatform() = Platform
     
     // Fix for unresolved IOS reference
-    val isIOS get() = Platform.toString().equals("IOS", ignoreCase = true)
+    val isIOS get() = Platform.getCurrentPlatform().toString().equals("IOS", ignoreCase = true)
 }
 
 object Plugins {

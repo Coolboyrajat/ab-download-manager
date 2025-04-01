@@ -1,7 +1,7 @@
-package ir.amirab.installer.extensiion
+
+package ir.amirab.installer.extension
 
 import ir.amirab.installer.InstallerTargetFormat
-import ir.amirab.installer.utils.Constants
 import ir.amirab.util.platform.Platform
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -41,7 +41,7 @@ abstract class InstallerPluginExtension {
     }
 
     val createInstallerTask: TaskProvider<Task> by lazy {
-        project.tasks.named(Constants.CREATE_INSTALLER_TASK_NAME)
+        project.tasks.named(ir.amirab.installer.utils.Constants.CREATE_INSTALLER_TASK_NAME)
     }
 
     fun isThisPlatformSupported(): Boolean {
@@ -84,4 +84,3 @@ data class WindowsConfig(
 
     var extraParams: Map<String, Any> = emptyMap()
 ) : Serializable
-

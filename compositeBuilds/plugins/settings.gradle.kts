@@ -1,3 +1,13 @@
+rootProject.name = "plugins"
+
+include(":git-version-plugin")
+include(":installer-plugin")
+
+// Include the shared composite build
+includeBuild("../shared") {
+    name = "shared-composite"
+}
+
 dependencyResolutionManagement{
     versionCatalogs {
         create("libs"){
@@ -5,5 +15,3 @@ dependencyResolutionManagement{
         }
     }
 }
-include("git-version-plugin")
-include("installer-plugin")

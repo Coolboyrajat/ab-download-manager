@@ -1,20 +1,20 @@
 package myPlugins
 
 plugins {
-    id("myPlugins.composeBase")
-}
-
-dependencies {
-    api(compose.desktop.currentOs){
-        exclude("org.jetbrains.compose.material")
-    }
-}
-plugins {
-    id("myPlugins.composeBase")
     id("org.jetbrains.kotlin.jvm")
 }
 
-// Desktop-specific compose dependencies
+// Apply the composeBase plugin by directly applying the script
+apply(plugin = "myPlugins.composeBase")
+
 dependencies {
-    implementation(compose.desktop.currentOs)
+    // Get access to the dependencies DSL
+    val api by configurations
+
+    api("org.jetbrains.compose.desktop:desktop") {
+        exclude("org.jetbrains.compose.material")
+    }
+    api("org.jetbrains.compose.desktop:desktop-jvm") {
+        exclude(group = "org.jetbrains.compose.material")
+    }
 }

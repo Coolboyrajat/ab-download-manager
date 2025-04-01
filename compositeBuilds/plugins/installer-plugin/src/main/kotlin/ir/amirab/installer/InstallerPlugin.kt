@@ -1,6 +1,6 @@
 package ir.amirab.installer
 
-import ir.amirab.installer.extensiion.InstallerPluginExtension
+import ir.amirab.installer.extension.InstallerPluginExtension
 import ir.amirab.installer.tasks.windows.NsisTask
 import ir.amirab.installer.utils.Constants
 import ir.amirab.util.platform.Platform
@@ -11,7 +11,7 @@ import org.gradle.kotlin.dsl.register
 
 class InstallerPlugin : Plugin<Project> {
     override fun apply(target: Project) {
-        val extension = target.extensions.create("installerPlugin", InstallerPluginExtension::class)
+        val extension = target.extensions.create("installerPlugin", InstallerPluginExtension::class.java)
         target.afterEvaluate {
             registerTasks(target, extension)
         }
@@ -57,24 +57,5 @@ class InstallerPlugin : Plugin<Project> {
                 else -> error("unsupported platform: $platform")
             }
         }
-    }
-}
-package ir.amirab.installer
-
-import org.gradle.api.Plugin
-import org.gradle.api.Project
-
-class InstallerPlugin : Plugin<Project> {
-    override fun apply(target: Project) {
-        // Basic implementation for the installer plugin
-        target.extensions.create("installer", InstallerExtension::class.java)
-    }
-}
-
-open class InstallerExtension {
-    var installationPath: String = ""
-    
-    fun setup() {
-        // Installer setup logic would go here
     }
 }
