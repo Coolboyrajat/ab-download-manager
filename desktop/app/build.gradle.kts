@@ -15,7 +15,7 @@ plugins {
     id(Plugins.ksp)
     id(Plugins.aboutLibraries)
     id("ir.amirab.installer-plugin")
-//    id(MyPlugins.proguardDesktop)
+    id(MyPlugins.proguardDesktop)
 }
 
 
