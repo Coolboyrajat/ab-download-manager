@@ -2,13 +2,10 @@ import io.github.z4kn4fein.semver.toVersion
 import ir.amirab.git_version.core.semanticVersionRegex
 
 plugins {
-    id("com.android.application") version "8.1.0" apply false
-    id("com.android.library") version "8.1.0" apply false
-    id("org.jetbrains.kotlin.android") version "1.9.0" apply false
-    id("ir.amirab.git-version-plugin")
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.serialization) apply false
+    id("ir.amirab.git-version-plugin") version "0.0.8"
 }
 
 val defaultSemVersion = "1.0.0"
@@ -27,6 +24,7 @@ gitVersion {
         }
     }
 }
+
 //version="0.0.8"
 version = gitVersion.getVersion() ?: fallBackVersion
-logger.lifecycle("version: ${version.toString()}")
+logger.lifecycle("version: $version")
