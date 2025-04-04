@@ -1,6 +1,7 @@
 
 package com.abdownloadmanager.mobile.di
 
+import com.abdownloadmanager.mobile.platform.MobilePlatformProvider
 import com.abdownloadmanager.mobile.settings.MobileUISettings
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -11,4 +12,5 @@ import org.koin.dsl.module
 val mobileCommonModule = module {
     // Provide shared mobile UI settings
     single { MobileUISettings() }
+    single<MobilePlatformProvider> { get() }
 }

@@ -77,6 +77,7 @@ include(":android:app")
 // iOS modules
 include(":ios:app")
 include(":ios:shared")
+include(":mobile:huawei:app")
 
 // Expose project properties
 val composeVersion: String by settings
