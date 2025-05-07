@@ -57,6 +57,10 @@
     {
       "name": "seniordevops",
       "link": "https://crowdin.com/profile/seniordevops"
+    },
+    {
+      "name": "Armin Deck (armindeck)",
+      "link": "https://crowdin.com/profile/armindeck"
     }
   ],
   "fa": [
@@ -67,6 +71,12 @@
     {
       "name": "Ehsan Narmani (kotlinx)",
       "link": "https://crowdin.com/profile/kotlinx"
+    }
+  ],
+  "fi": [
+    {
+      "name": "Oskari Lavinto (olavinto)",
+      "link": "https://crowdin.com/profile/olavinto"
     }
   ],
   "fr": [

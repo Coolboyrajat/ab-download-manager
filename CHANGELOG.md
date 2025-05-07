@@ -14,6 +14,48 @@
 
 ### Security
 
+## 1.5.7
+
+### Added
+
+- Drag and Drop files to other categories or external applications
+
+### Fixed
+
+- "Parts Info" section in the "Download Progress" window does not expand for the first time
+
+### Improved
+
+- Translations Updated
+- Improved UI rendering on Windows, resulting in higher FPS.
+- Minor UI/UX Improvements
+
+## 1.5.6
+
+### Added
+
+- Finnish Language Support
+- An option to make the start time of queues optional
+- An ability to edit saved checksums on the "File Checksum Checker" page'
+
+### Changed
+
+- The "Close" button in the "Download Progress" window has been renamed to "Cancel" (this stops the download and closes
+  the window). To close the window without stopping the download, use the "X" button.
+
+### Fixed
+
+- An issue where filenames in email attachments were not captured correctly
+- The updater wouldn't resume after the download was stopped
+- "Open Folder" doesn’t work properly on Linux when the file name contains special characters.
+- Changing settings in the 'Download Progress' window also affects other download items!
+
+### Improved
+
+- Translations updated
+- "Download Progress" and "Queues" windows UI improvements
+- Pressing "Download Browser Integration" the download page will be opened in the corresponding browser
+
 ## 1.5.5
 
 ### Added
