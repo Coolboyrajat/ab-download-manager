@@ -14,6 +14,24 @@
 
 ### Security
 
+## 1.11.2
+
+### Added
+
+- Add download location to the desktop download list table (disabled by default) (#1483)
+- Add an option to disable the `Add`/`Download` button while download link information is loading (#1508)
+- Add Start Queue, Stop Queue, and Stop All actions to the system tray
+- Add QR code support for sharing and scanning download links (#1511)
+
+### Fixed
+
+- Prevent download progress windows from being brought to the front when retrying a failed download (#1482)
+- Enforce API key authentication for specific routes (#1512)
+
+### Improved
+
+- Update translations
+
 ## 1.11.1
 
 ### Fixed
